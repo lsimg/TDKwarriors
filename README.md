@@ -1,7 +1,7 @@
 # Hello! We are team **tdk.NIS-warriors**.
 # WRO - Future Engineers - Robotics Project Documentation
 
-
+<img src="T-photo/team.jpeg" alt="Фото команды" width="400">
 
 ## Team Members
 
