@@ -55,7 +55,7 @@ Back to navigation: [README](./README.md)
 
 ## Mechanical Artifacts
 
-- Chassis diagram: ![Chassis diagram](./assets/images/chassis-diagram.png)
+- Chassis diagram: ![Chassis diagram](./assets/images/steering.jpeg)
 - CAD/STL files location: `models/`
 - Assembly notes location: `other/assembly-notes.md`
 
