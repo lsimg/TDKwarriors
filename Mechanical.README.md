@@ -55,7 +55,7 @@ To understand which speed is most beneficial to use to minimize slippage and sho
 
 ## Mechanical Artifacts
 
-- Chassis diagram: ![Chassis diagram](./assets/images/steering.jpeg)
+- Chassis diagram: ![Chassis diagram]<img src="steering.jpeg" width="300" alt="Мое фото">
 - CAD/STL files location: `models/`
 - Assembly notes location: `other/assembly-notes.md`
 
