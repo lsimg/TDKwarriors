@@ -1,0 +1,274 @@
+ROBOT_COORD_MIN_MM = 0
+ROBOT_COORD_MAX_MM = 3000
+ROBOT_COORD_SPAN_MM = ROBOT_COORD_MAX_MM - ROBOT_COORD_MIN_MM
+
+MAP_COORD_MIN_MM = -100
+MAP_COORD_MAX_MM = 3100
+MAP_COORD_SPAN_MM = MAP_COORD_MAX_MM - MAP_COORD_MIN_MM
+
+TRACK_MIN_MM = ROBOT_COORD_MIN_MM
+TRACK_MAX_MM = ROBOT_COORD_MAX_MM
+
+VALID_SIDES = ("bottom", "right", "top", "left")
+VALID_WALL_WIDTHS_MM = (600, 1000)
+
+BOTTOM_START_ZONES_MM = {
+    1: (1500, 600, 2000, 1000),
+    2: (1500, 400, 2000, 600),
+    3: (1500, 0, 2000, 400),
+    4: (1000, 600, 1500, 1000),
+    5: (1000, 400, 1500, 600),
+    6: (1000, 0, 1500, 400),
+}
+
+_SIDE_TURNS = {
+    "bottom": 0,
+    "right": 1,
+    "top": 2,
+    "left": 3,
+}
+
+_NEXT_SIDE_CCW = {
+    "bottom": "right",
+    "right": "top",
+    "top": "left",
+    "left": "bottom",
+}
+
+_NEXT_SIDE_CW = {
+    "bottom": "left",
+    "left": "top",
+    "top": "right",
+    "right": "bottom",
+}
+
+
+def _normalize_side(side):
+    value = str(side).lower()
+    if value not in VALID_SIDES:
+        raise ValueError("Invalid side: " + str(side))
+    return value
+
+
+def normalize_direction(direction):
+    value = str(direction).lower()
+    if value in ("cw", "clockwise"):
+        return "clockwise"
+    if value in ("ccw", "counterclockwise", "counter-clockwise"):
+        return "counterclockwise"
+    raise ValueError("Invalid direction: " + str(direction))
+
+
+def _clamp(value, low, high):
+    return max(low, min(high, value))
+
+
+def validate_wall_widths(widths):
+    result = {}
+    for side in VALID_SIDES:
+        if side not in widths:
+            raise ValueError("Missing wall width for side: " + side)
+        value = int(widths[side])
+        if value not in VALID_WALL_WIDTHS_MM:
+            raise ValueError("Wall width for " + side + " must be 600 or 1000 mm.")
+        result[side] = value
+    return result
+
+
+def rotate_point_by_side(x, y, side):
+    side = _normalize_side(side)
+    turns = _SIDE_TURNS[side]
+    if turns == 0:
+        return float(x), float(y)
+    if turns == 1:
+        return float(TRACK_MAX_MM - y), float(x)
+    if turns == 2:
+        return float(TRACK_MAX_MM - x), float(TRACK_MAX_MM - y)
+    return float(y), float(TRACK_MAX_MM - x)
+
+
+def start_zone_bounds(side, zone):
+    side = _normalize_side(side)
+    zone = int(zone)
+    if zone not in BOTTOM_START_ZONES_MM:
+        raise ValueError("Start zone must be 1..6.")
+
+    x_min, y_min, x_max, y_max = BOTTOM_START_ZONES_MM[zone]
+    p1x, p1y = rotate_point_by_side(x_min, y_min, side)
+    p2x, p2y = rotate_point_by_side(x_max, y_max, side)
+    return (
+        min(p1x, p2x),
+        min(p1y, p2y),
+        max(p1x, p2x),
+        max(p1y, p2y),
+    )
+
+
+def start_zone_center(side, zone):
+    x_min, y_min, x_max, y_max = start_zone_bounds(side, zone)
+    return (x_min + x_max) / 2.0, (y_min + y_max) / 2.0
+
+
+def is_start_zone_valid(side, zone, wall_widths):
+    side = _normalize_side(side)
+    widths = validate_wall_widths(wall_widths)
+    x_min, y_min, x_max, y_max = start_zone_bounds(side, zone)
+    eps = 0.000001
+
+    if side == "bottom":
+        return y_max <= widths["bottom"] + eps
+    if side == "top":
+        return y_min >= TRACK_MAX_MM - widths["top"] - eps
+    if side == "left":
+        return x_max <= widths["left"] + eps
+    return x_min >= TRACK_MAX_MM - widths["right"] - eps
+
+
+def start_heading_deg(side, direction):
+    side = _normalize_side(side)
+    direction = normalize_direction(direction)
+    if direction == "counterclockwise":
+        headings = {
+            "bottom": 0,
+            "right": 90,
+            "top": 180,
+            "left": 270,
+        }
+    else:
+        headings = {
+            "bottom": 180,
+            "left": 90,
+            "top": 0,
+            "right": 270,
+        }
+    return headings[side]
+
+
+def open_start_pose(direction, start_side, start_zone, wall_widths):
+    if not is_start_zone_valid(start_side, start_zone, wall_widths):
+        raise ValueError("Start zone is inside the configured inner wall.")
+    x, y = start_zone_center(start_side, start_zone)
+    return x, y, start_heading_deg(start_side, direction)
+
+
+def _centerline_limits(wall_widths):
+    widths = validate_wall_widths(wall_widths)
+    left_x = widths["left"] / 2.0
+    right_x = TRACK_MAX_MM - widths["right"] / 2.0
+    bottom_y = widths["bottom"] / 2.0
+    top_y = TRACK_MAX_MM - widths["top"] / 2.0
+    return left_x, right_x, bottom_y, top_y
+
+
+def _next_side(side, direction):
+    if direction == "counterclockwise":
+        return _NEXT_SIDE_CCW[side]
+    return _NEXT_SIDE_CW[side]
+
+
+def _side_end(side, direction, limits):
+    left_x, right_x, bottom_y, top_y = limits
+    if direction == "counterclockwise":
+        if side == "bottom":
+            return right_x, bottom_y
+        if side == "right":
+            return right_x, top_y
+        if side == "top":
+            return left_x, top_y
+        return left_x, bottom_y
+
+    if side == "bottom":
+        return left_x, bottom_y
+    if side == "left":
+        return left_x, top_y
+    if side == "top":
+        return right_x, top_y
+    return right_x, bottom_y
+
+
+def _side_anchor(side, x, y, limits):
+    left_x, right_x, bottom_y, top_y = limits
+    if side == "bottom":
+        return _clamp(x, left_x, right_x), bottom_y
+    if side == "top":
+        return _clamp(x, left_x, right_x), top_y
+    if side == "right":
+        return right_x, _clamp(y, bottom_y, top_y)
+    return left_x, _clamp(y, bottom_y, top_y)
+
+
+def open_practice_path(direction, start_side, start_zone, wall_widths, laps=3):
+    direction = normalize_direction(direction)
+    start_side = _normalize_side(start_side)
+    laps = int(laps)
+    if laps <= 0:
+        raise ValueError("Laps must be greater than zero.")
+
+    start_x, start_y, _heading = open_start_pose(
+        direction,
+        start_side,
+        start_zone,
+        wall_widths,
+    )
+    limits = _centerline_limits(wall_widths)
+    anchor = _side_anchor(start_side, start_x, start_y, limits)
+
+    points = [anchor]
+    for _lap in range(laps):
+        side = start_side
+        for _side_index in range(4):
+            points.append(_side_end(side, direction, limits))
+            side = _next_side(side, direction)
+        points.append(anchor)
+    return points
+
+
+def extreme_corner_path(direction, laps=3, low_mm=300, high_mm=2700):
+    direction = normalize_direction(direction)
+    laps = int(laps)
+    if laps <= 0:
+        raise ValueError("Laps must be greater than zero.")
+
+    if direction == "counterclockwise":
+        corners = [
+            (high_mm, low_mm),
+            (high_mm, high_mm),
+            (low_mm, high_mm),
+            (low_mm, low_mm),
+        ]
+    else:
+        corners = [
+            (low_mm, low_mm),
+            (low_mm, high_mm),
+            (high_mm, high_mm),
+            (high_mm, low_mm),
+        ]
+
+    points = []
+    for _lap in range(laps):
+        points.extend(corners)
+    return points
+
+
+__all__ = [
+    "ROBOT_COORD_MIN_MM",
+    "ROBOT_COORD_MAX_MM",
+    "ROBOT_COORD_SPAN_MM",
+    "MAP_COORD_MIN_MM",
+    "MAP_COORD_MAX_MM",
+    "MAP_COORD_SPAN_MM",
+    "TRACK_MIN_MM",
+    "TRACK_MAX_MM",
+    "VALID_SIDES",
+    "VALID_WALL_WIDTHS_MM",
+    "normalize_direction",
+    "validate_wall_widths",
+    "rotate_point_by_side",
+    "start_zone_bounds",
+    "start_zone_center",
+    "is_start_zone_valid",
+    "start_heading_deg",
+    "open_start_pose",
+    "open_practice_path",
+    "extreme_corner_path",
+]
