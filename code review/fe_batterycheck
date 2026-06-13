@@ -1,0 +1,27 @@
+from pybricks.hubs import TechnicHub
+from pybricks.tools import wait
+from pybricks.parameters import Color
+
+# Инициализируем хаб
+hub = TechnicHub()
+
+# Технические характеристики аккумулятора LEGO Technic (Li-ion)
+# Полный заряд ~ 8.2V - 8.4V, разряжен ~ 6.5V - 7.0V
+MAX_VOLTAGE = 8200 
+MIN_VOLTAGE = 6800
+
+while True:
+    # Получаем напряжение в милливольтах
+    voltage_mv = hub.battery.voltage()
+    
+    # Вычисляем процент (простая линейная формула)
+    # Используем min и max, чтобы значение не выходило за пределы 0-100%
+    percent = (voltage_mv - MIN_VOLTAGE) / (MAX_VOLTAGE - MIN_VOLTAGE) * 100
+    percent = max(0, min(100, percent))
+    if percent > 60 :
+        hub.light.on(Color.GREEN)
+    # Вывод данных в консоль
+    print("Напряжение: {} mV | Заряд: {:.1f}%".format(voltage_mv, percent))
+    
+    # Задержка 1 секунда, чтобы не спамить в консоль
+    wait(1000)
