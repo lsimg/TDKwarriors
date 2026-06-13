@@ -1,0 +1,72 @@
+from pybricks.parameters import Direction, Port, Stop
+
+
+# Practice route settings.
+LAPS = 3
+PATH_SPEED = 80
+PATH_MIN_SPEED = 35
+PATH_LOOKAHEAD_MM = 140
+PATH_FINAL_RADIUS_MM = 60
+ROUND_TIMEOUT_MS = 180000
+PATH_STOP = Stop.BRAKE
+
+
+# The hub button used to start the run after the program is already waiting.
+# Change to "BLUETOOTH" if that is how the Technic Hub button is exposed.
+START_BUTTON = "CENTER"
+
+
+# Custom LPF2/LUMP distance block from FE.ino.
+# It returns three DATA16 values in mode 0: left, front, right in millimeters.
+# Use the port where the Arduino LPF2 cable is connected. A/B are used by motors.
+DISTANCE_SENSOR_PORT = Port.C
+DISTANCE_SENSOR_MODE = 0
+DISTANCE_SENSOR_INTERVAL_MS = 20
+PRINT_DISTANCE_SENSOR_SNAPSHOT = True
+
+
+# Sensor geometry measured from the robot odometry axis.
+FRONT_SENSOR_FORWARD_OFFSET_MM = 180
+SIDE_SENSOR_FORWARD_OFFSET_MM = 60
+SIDE_SENSOR_SPACING_MM = 70
+
+
+# Sensor-based Open Challenge localization.
+START_SIDE = "bottom"
+FRONT_WALL_THRESHOLD_MM = 400
+LOCALIZATION_APPROACH_SPEED = 25
+LOCALIZATION_TIMEOUT_MS = 6000
+OPEN_WALL_WIDTHS_MM = (600, 1000)
+
+
+# Fixed safe route after localization.
+EDGE_ROUTE_LOW_MM = 300
+EDGE_ROUTE_HIGH_MM = 2700
+
+
+# Technic steering robot defaults from the xACT FE example.
+DRIVE_PORT = Port.A
+STEER_PORT = Port.B
+DRIVE_DIR = Direction.CLOCKWISE
+STEER_DIR = Direction.COUNTERCLOCKWISE
+WHEEL_DIAMETER_MM = 62.4
+DRIVE_GEAR_RATIO = 1.0606  # 36:8 and 14:22
+STEER_GEAR_RATIO = 2.0     # 12:24
+STEER_SPEED = 300
+MAX_STEER_DEG = 120
+STEER_CENTER = 0
+STEER_CALIBRATE_OFFSET = 15
+STEER_INVERTED = False
+
+
+# Steering path controller tuning used by follow_path_action().
+DRIVE_TO_POINT_KP = 0.5
+DRIVE_TO_POINT_KI = 0.0
+DRIVE_TO_POINT_KD = 0.2
+DRIVE_TO_POINT_MAX_STEER_DEG = 60
+DRIVE_TO_POINT_MIN_SPEED = 30
+DRIVE_TO_POINT_STOP_DIST_MM = 25
+DRIVE_TO_POINT_I_LIMIT = 200
+DRIVE_TO_POINT_POSE_OFFSET_MM = 10
+DRIVE_TO_POINT_MAX_ACCEL_DIST_MM = 100
+DRIVE_TO_POINT_MAX_DECEL_DIST_MM = 100
