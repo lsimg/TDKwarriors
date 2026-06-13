@@ -43,4 +43,4 @@ To ensure the software behaves identically on a different hub:
 3. Verify motor orientation and `STEER_INVERTED` settings in `fe_config.py`.
 
 ## Code first versions 
-in the [README](./Software.README.md)
+in the (./Software.README.md)
