@@ -1,0 +1,130 @@
+from pybricks.hubs import TechnicHub
+from pybricks.parameters import Direction, Port, Stop
+from pybricks.pupdevices import Motor
+from pybricks.tools import StopWatch, wait
+
+
+DP = Port.A
+SP = Port.B
+DD = Direction.CLOCKWISE
+SD = Direction.COUNTERCLOCKWISE
+
+WMM = 0.54454
+DGR = 1.0606
+SS = 300
+SGR = 2.0
+SMAX = 50
+PWR = 45
+PREP_SEC = 5
+STRAIGHT_MM = 700
+METER_MM = 1000
+
+
+hub = TechnicHub()
+drv = Motor(DP, DD)
+strm = Motor(SP, SD, reset_angle=False)
+
+
+def beep():
+    try:
+        hub.speaker.beep(880, 100)
+    except AttributeError:
+        pass
+
+
+def prep(msg, sec=PREP_SEC):
+    print("")
+    print(msg)
+    for i in range(sec, 0, -1):
+        print(i)
+        wait(1000)
+
+
+def aw(a):
+    return (a + 180) % 360 - 180
+
+
+def center():
+    strm.run_target(SS, 0, then=Stop.HOLD, wait=True)
+
+
+def steer(a):
+    if a > SMAX:
+        a = SMAX
+    if a < -SMAX:
+        a = -SMAX
+    strm.run_target(SS, a * SGR, then=Stop.HOLD, wait=False)
+
+
+def stop():
+    drv.brake()
+    center()
+
+
+def pose():
+    print("H", hub.imu.heading(), "A", drv.angle())
+
+
+def drive_mm(mm, pwr=PWR, hdg=0, tout=12000):
+    drv.reset_angle(0)
+    tgt = abs(mm) / WMM * DGR
+    sign = 1 if mm >= 0 else -1
+    t = StopWatch()
+    last = 0
+    perr = 0
+
+    while t.time() < tout:
+        a = drv.angle()
+        if (sign > 0 and a >= tgt) or (sign < 0 and a <= -tgt):
+            break
+
+        err = aw(hdg - hub.imu.heading())
+        now = t.time()
+        dt = (now - last) / 1000
+        last = now
+        der = aw(err - perr) / dt if dt > 0 else 0
+        perr = err
+
+        steer(2.0 * err + 0.4 * der)
+        drv.dc(sign * pwr)
+        wait(10)
+
+    stop()
+    beep()
+    pose()
+
+
+def test_straight():
+    print("1 straight")
+    prep("Line, drive 700")
+    hub.imu.reset_heading(0)
+    center()
+    drive_mm(STRAIGHT_MM, PWR, 0, 10000)
+    print("Check straight line")
+
+
+def test_meter():
+    print("2 meter")
+    prep("Start mark, drive 1000")
+    hub.imu.reset_heading(0)
+    center()
+    drive_mm(METER_MM, PWR, 0, 12000)
+    print("Measure real distance")
+
+
+def main():
+    while not hub.imu.ready():
+        wait(10)
+    center()
+
+    print("FE straight/meter")
+    print("No buttons")
+    beep()
+    test_straight()
+    test_meter()
+    beep()
+    print("done")
+
+
+if __name__ == "__main__":
+    main()
