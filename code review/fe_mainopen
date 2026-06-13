@@ -1,0 +1,120 @@
+from pybricks.hubs import TechnicHub
+from pybricks.parameters import Button
+from pybricks.tools import wait
+
+import fe_config as cfg
+from fe_field import extreme_corner_path
+from xAct_action import SequentialAction, run_actions
+from xAct_robot_steer import Robot
+
+
+def _resolve_button(button):
+    if isinstance(button, str):
+        if not hasattr(Button, button):
+            raise RuntimeError("Unknown start button: " + button)
+        return getattr(Button, button)
+    return button
+
+
+def wait_for_start_button(hub, button):
+    button = _resolve_button(button)
+    print("Ready. Press start button.")
+
+    while button in hub.buttons.pressed():
+        wait(10)
+    while button not in hub.buttons.pressed():
+        wait(10)
+    while button in hub.buttons.pressed():
+        wait(10)
+
+
+def build_robot(hub, heading_zero):
+    robot = Robot(
+        hub,
+        drive_port=cfg.DRIVE_PORT,
+        steer_port=cfg.STEER_PORT,
+        drive_dir=cfg.DRIVE_DIR,
+        steer_dir=cfg.STEER_DIR,
+        wheel_diameter_mm=cfg.WHEEL_DIAMETER_MM,
+        drive_gear_ratio=cfg.DRIVE_GEAR_RATIO,
+        steer_gear_ratio=cfg.STEER_GEAR_RATIO,
+        steer_speed=cfg.STEER_SPEED,
+        max_steer_deg=cfg.MAX_STEER_DEG,
+        steer_center=cfg.STEER_CENTER,
+        steer_calibrate_offset=cfg.STEER_CALIBRATE_OFFSET,
+        steer_inverted=cfg.STEER_INVERTED,
+        heading_zero=heading_zero,
+        distance_sensor_port=cfg.DISTANCE_SENSOR_PORT,
+        distance_sensor_mode=cfg.DISTANCE_SENSOR_MODE,
+    )
+    robot.set_drive_to_point_tuning(
+        kp=cfg.DRIVE_TO_POINT_KP,
+        ki=cfg.DRIVE_TO_POINT_KI,
+        kd=cfg.DRIVE_TO_POINT_KD,
+        max_steer_deg=cfg.DRIVE_TO_POINT_MAX_STEER_DEG,
+        min_speed=cfg.DRIVE_TO_POINT_MIN_SPEED,
+        stop_dist_mm=cfg.DRIVE_TO_POINT_STOP_DIST_MM,
+        i_limit=cfg.DRIVE_TO_POINT_I_LIMIT,
+        pose_offset_mm=cfg.DRIVE_TO_POINT_POSE_OFFSET_MM,
+        max_accel_dist_mm=cfg.DRIVE_TO_POINT_MAX_ACCEL_DIST_MM,
+        max_decel_dist_mm=cfg.DRIVE_TO_POINT_MAX_DECEL_DIST_MM,
+    )
+    return robot
+
+
+def mission(robot):
+    actions = [
+        robot.open_bottom_localization_action(
+            front_threshold_mm=cfg.FRONT_WALL_THRESHOLD_MM,
+            approach_speed=cfg.LOCALIZATION_APPROACH_SPEED,
+            front_sensor_forward_offset_mm=cfg.FRONT_SENSOR_FORWARD_OFFSET_MM,
+            side_sensor_spacing_mm=cfg.SIDE_SENSOR_SPACING_MM,
+            side_sensor_forward_offset_mm=cfg.SIDE_SENSOR_FORWARD_OFFSET_MM,
+            wall_width_choices_mm=cfg.OPEN_WALL_WIDTHS_MM,
+            timeout_ms=cfg.LOCALIZATION_TIMEOUT_MS,
+            stop=cfg.PATH_STOP,
+        ),
+    ]
+    if cfg.PRINT_DISTANCE_SENSOR_SNAPSHOT:
+        actions.append(robot.print_distance_sensors_action())
+    actions.extend([
+        robot.follow_path_action(
+            lambda: extreme_corner_path(
+                robot.open_direction,
+                laps=cfg.LAPS,
+                low_mm=cfg.EDGE_ROUTE_LOW_MM,
+                high_mm=cfg.EDGE_ROUTE_HIGH_MM,
+            ),
+            speed=cfg.PATH_SPEED,
+            lookahead_mm=cfg.PATH_LOOKAHEAD_MM,
+            final_radius_mm=cfg.PATH_FINAL_RADIUS_MM,
+            min_speed=cfg.PATH_MIN_SPEED,
+            stop=cfg.PATH_STOP,
+            timeout_ms=cfg.ROUND_TIMEOUT_MS,
+        ),
+        robot.print_pose_action(),
+    ])
+    return [
+        SequentialAction(robot, actions)
+    ]
+
+
+def main():
+    hub = TechnicHub()
+    robot = build_robot(hub, 0)
+    background = [
+        robot.odometry_action(),
+        robot.distance_sensors_action(interval_ms=cfg.DISTANCE_SENSOR_INTERVAL_MS),
+    ]
+    actions = mission(robot)
+
+    print("Open practice: sensor localization from", cfg.START_SIDE)
+    print("Route corners:", cfg.EDGE_ROUTE_LOW_MM, cfg.EDGE_ROUTE_HIGH_MM)
+
+    robot.beep()
+    wait_for_start_button(hub, cfg.START_BUTTON)
+    run_actions(robot, actions, background)
+
+
+if __name__ == "__main__":
+    main()
