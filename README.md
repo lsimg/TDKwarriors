@@ -135,4 +135,302 @@ More technical documentation will be added later, including:
 
 ## Goal of This Repository
 
-The purpose of this repository is to document the development of our WRO Future Engineers 2026 robot and show the current progress of our engineering work.
+The purpose of this repository is to document the development of our WRO Future Engineers 2026 robot and show the current progress of our engineering work.And make our robot Reproducibility
+
+
+мы выбрали спайк медиум мотор потому что в отличий от поверед ап мотора  спайк мотор имеет более высокую точность но в угоду этой точности мы пожертвовали мошностью мотора 
+
+
+
+
+
+ИЗМЕНЕНИЯ 
+с первой версий робот поменялся мы поменяли систему поворотов так как после тестов выяснилось что эта система была не коректна и мы решили вернутся к паралельной повооротной системе , также мы убрали шестеренки из поворотной системы чтобы робот мог лучше поворачивать и иметь более коретный ноль 
+, также с первой версийробот сместил центр масс назад и также он стал более узким  более маневреных движений и для удобства парковки , также после тестов выяснлось что у наших колес недостаточное сцепление с трассой поэтому мы приняли решение поменять их на силиконовые  
+ЧТО ПОМЕНЯЛОСЬ В АРХИТЕКТУРЕ ПОДКЛЮЧЕНИЯ 
+
+после нескольких тестов мы поняли то что камера OPENMV более совместима с платой ардуино нежели с техник хаб через специальный протокол , и лучше чтобы ардуино получая данные с OPENMV отправляла их через библиотеку LumpDeviceBuilder.h 
+
+МЕТОД КАЛИБРОВКИ 
+Посде тестов мы поняли что лучше калибровать робот основываясь на сенсорах чтоы робот удерживал оптимальную от внутреней стены расстояние и таким образом коректо встраивал свой путь движения 
+
+ПАУЕР система
+для питания робота мы изпользуем две литионные 4вольтовые батареки для передачи энергий  на 3.3 вольта вместо пяти мы изпользовали преобразователь который очень экономно находится прямо снизу ардуино на распечааттаной детали это сделано чтобы сделать робота более эргономичным 
+а 3.3 вольта нужно потому что поти все компоненты нашего робота изпользуют 3.3 воьтовую систему мы посчитали изпользование преобразователя эргономичнее нежели изпользование резисторов 
+
+компромис расположений датчиков 
+мы оставили датчики по бокам и спереди с углом 90 градусов иза нескольких причин во первых нулевая математика мы не считаем проекцию и математика робота выходит легче во втоорых этоу удобство изпользования например мы изпользуем датчики для определения направления движения почасовой протичасвй ведб когда одна из боковых стенок ихчехает из поля зрение датчика он по тому с какой стороны изчезла стена может понять направление движения 
+но при этом у такого расположения есть существенный минус то что у датчиков есть слепая зона под углом 45 градусов  
+
+
+слаженая работа все системы 
+опен челендж датчики отправляют данные ардуино ардуино их отправляет техник хабу техник хаб принимает переводит их в числа и на основе этих данных строит логику движения и отправляет команды мотороам 
+опсткл челендж камера видя цвет определяет какую команду отправить и после отправки команды ардуино она передает их техник хабу 
+
+
+
+# Robot Engineering Documentation
+
+## Mobility and Mechanical Design
+
+### Chassis and Drive System
+
+We selected the SPIKE Medium Motor for the steering system because it provides significantly higher positioning accuracy compared to the LEGO Powered Up motor. Precise steering is critical for maintaining stable lane following and accurate turning. The trade-off of this decision is lower torque and power, which we accepted in exchange for improved steering precision.
+
+### Design Evolution
+
+During the development process, the robot underwent several major revisions.
+
+After testing the first version, we discovered that the original steering mechanism did not provide consistent and repeatable turning behavior. As a result, we returned to a parallel steering system that offered more predictable movement.
+
+Additional improvements included:
+
+* Removal of gears from the steering mechanism to reduce backlash and improve steering accuracy.
+* Improved center position calibration ("zero position") of the steering system.
+* Relocation of the center of mass toward the rear of the robot.
+* Reduction of the robot width to improve maneuverability and simplify parking maneuvers.
+* Replacement of the original wheels with silicone wheels after testing revealed insufficient traction on the competition field.
+
+### Mechanical Layout
+
+**Mechanical Design Diagram**
+
+*Insert chassis CAD image here.*
+
+**Steering System Diagram**
+
+*Insert steering mechanism diagram here.*
+
+### Testing and Improvements
+
+| Test                   | Observation                                          | Improvement                          |
+| ---------------------- | ---------------------------------------------------- | ------------------------------------ |
+| Steering accuracy test | Original steering system produced inconsistent turns | Switched to parallel steering system |
+| Traction test          | Wheels slipped during acceleration and turning       | Replaced wheels with silicone wheels |
+| Parking test           | Wide chassis reduced maneuverability                 | Reduced robot width                  |
+
+---
+
+# Power and Sensor Architecture
+
+## Power Distribution
+
+The robot is powered by two 4V lithium batteries.
+
+Most electronic components in our system operate at 3.3V. Instead of using resistor-based voltage reduction, we chose to use a voltage converter (buck converter) that efficiently regulates the voltage from the batteries to 3.3V.
+
+The converter is mounted underneath the Arduino on a custom 3D-printed component, helping to reduce space usage and improve the overall ergonomics of the robot.
+
+### Power Architecture Diagram
+
+*Insert power distribution diagram here.*
+
+### Wiring Diagram
+
+(./assets/Wire.jpeg)
+
+---
+
+## Sensor Placement and Design Trade-Offs
+
+We positioned our distance sensors on the front, left, and right sides of the robot at 90-degree angles.
+
+This decision was made for several reasons:
+
+### Advantages
+
+#### Simpler Mathematics
+
+The sensors measure distances directly without requiring projection calculations. This simplifies software development and improves processing efficiency.
+
+#### Direction Detection
+
+The side sensors help determine the direction of movement around the track.
+
+For example:
+
+* If the left wall disappears from the left sensor's field of view, the robot can infer the track direction.
+* If the right wall disappears first, the robot can determine the opposite direction.
+
+### Disadvantages
+
+This configuration creates blind spots at approximately 45 degrees relative to the robot.
+
+We accepted this limitation because the benefits of simpler calculations and reliable direction detection outweighed the disadvantages.
+
+### Sensor Layout Diagram
+
+*Insert sensor placement diagram here.*
+
+---
+
+## Calibration Method
+
+After extensive testing, we determined that the most reliable calibration method is based on distance sensor measurements.
+
+The robot continuously maintains an optimal distance from the inner wall of the track. By using wall distance measurements as a reference, the robot can accurately adjust its position and maintain a consistent driving path.
+
+### Calibration Procedure
+
+1. Read side sensor values.
+2. Compare measured distance to target distance.
+3. Calculate position error.
+4. Apply steering correction.
+5. Repeat continuously during operation.
+
+### Calibration Flowchart
+
+(./assets/images/calibrateflowchart)
+
+---
+
+# Software Architecture and Obstacle Strategy
+
+## System Architecture
+
+### Open Challenge
+
+The system operates as follows:
+
+1. Distance sensors collect environmental data.
+2. Arduino receives sensor information.
+3. Arduino sends processed data to the Technic Hub using the LumpDeviceBuilder library.
+4. The Technic Hub converts the incoming data into numerical values.
+5. Navigation algorithms determine the required movement.
+6. Motor commands are sent to the drive and steering motors.
+
+### Obstacle Challenge
+
+The obstacle challenge uses the OpenMV camera.
+
+1. The OpenMV camera detects colored objects.
+2. The camera determines the required navigation command.
+3. The command is sent to the Arduino.
+4. Arduino forwards the information to the Technic Hub.
+5. The Technic Hub executes the appropriate maneuver.
+
+### Why We Chose Arduino as the Communication Bridge
+
+After multiple experiments, we found that the OpenMV camera integrates more reliably with Arduino than directly with the Technic Hub through a custom communication protocol.
+
+Using Arduino as an intermediary provides:
+
+* More stable communication.
+* Easier debugging.
+* Better compatibility with OpenMV.
+* Simpler software architecture.
+
+The Arduino then communicates with the Technic Hub using the LumpDeviceBuilder library.
+
+### Software Flowchart
+
+*Insert software flowchart here.*
+
+### State Machine
+
+*Insert state machine diagram here.*
+
+---
+
+# Systems Thinking and Engineering Decisions
+
+## Constraints
+
+During development we faced several engineering constraints:
+
+* Limited available space inside the robot.
+* Limited processing power on embedded devices.
+* Weight distribution requirements.
+* Sensor field-of-view limitations.
+* Competition time constraints.
+
+## Design Trade-Offs
+
+### Steering Accuracy vs Motor Power
+
+We selected the SPIKE Medium Motor because steering precision was more important than torque.
+
+**Benefit:** Higher steering accuracy.
+
+**Cost:** Reduced steering power.
+
+### Sensor Simplicity vs Blind Spots
+
+We mounted sensors at 90-degree angles.
+
+**Benefit:** Simpler calculations and direction detection.
+
+**Cost:** 45-degree blind zones.
+
+### Voltage Converter vs Resistor-Based Regulation
+
+We chose a buck converter.
+
+**Benefit:** Better efficiency and lower power loss.
+
+**Cost:** Slightly increased hardware complexity.
+
+---
+
+# Version History
+
+## Version 1
+
+* Original steering mechanism.
+* Original wheel configuration.
+* Wider chassis.
+
+## Version 2
+
+* Parallel steering system introduced.
+* Steering gears removed.
+* Center of mass adjusted.
+
+## Version 3
+
+* Silicone wheels installed.
+* Improved sensor calibration method.
+* OpenMV-Arduino-Technic Hub communication architecture finalized.
+
+---
+
+# Reproducibility
+
+This repository contains all information required to reproduce the robot:
+
+* Source code
+* CAD files
+* Wiring diagrams
+* Mechanical drawings
+* Calibration procedures
+* Build instructions
+
+## Build Instructions
+
+### Hardware Assembly
+
+*Insert assembly guide here.*
+
+### Electronics Assembly
+
+(./assets/wire.jpeg)
+
+
+### Calibration Procedure
+
+*Insert calibration instructions here.*
+
+---
+
+# Repository Structure
+
+```text
+/
+├── CAD/
+├── Wiring/
+├── Code/
+├── Documentation/
+├── Images/
+└── README.md
+```
+
