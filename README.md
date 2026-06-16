@@ -380,7 +380,7 @@ This repository contains all information required to reproduce the robot:
 
 ### Electronics Assembly
 
-(./assets/wire.jpeg)
+(./assets/Wire.jpeg)
 
 
 ### Calibration Procedure
