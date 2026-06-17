@@ -2,179 +2,146 @@
 
 Welcome to the official repository of **Team TDKwarriors** for **WRO Future Engineers 2026**.
 
-This repository contains the current public documentation of our autonomous robot car project for the 2026 season.
+This repository contains the complete engineering documentation, software, CAD files, wiring diagrams, and development history of our autonomous robot vehicle.
 
-## Team
+---
 
-- **Mussabek Nurtas**
-- **Mukhtar Gulsim**
+# Team
+
+## Members
+
+* **Mussabek Nurtas**
+* **Mukhtar Gulsim**
 
 ## Team Photo
 
 ![Team photo](./assets/images/team-official.png)
 
-## Project Overview
+---
 
-Our project is a compact autonomous robot car built for the **WRO Future Engineers** category.
+# Project Overview
 
-The robot is designed to complete both competition tasks:
+Our robot is a compact autonomous vehicle designed for the **WRO Future Engineers 2026** competition.
 
-- **Open Challenge** — complete 3 autonomous laps on the track
-- **Obstacle Challenge** — detect red and green pillars, pass on the correct side, complete 3 laps, and perform parking
+The robot is capable of completing both competition tasks:
 
-At the current stage, the robot includes:
+### Open Challenge
 
-- front-mounted **OpenMV camera**
-- **three distance sensors** (left, front, right)
-- steering and rear drive system
-- compact LEGO Technic-based vehicle platform
-- early flowcharts and software state-machine documentation
+* Complete 3 autonomous laps
+* Maintain stable lane following
+* Navigate using distance sensors
 
-## Robot Photos
+### Obstacle Challenge
 
-### Front View
+* Detect red and green pillars
+* Choose the correct passing side
+* Avoid obstacles
+* Recover to the driving line
+* Complete 3 laps
+* Perform autonomous parking
+
+---
+
+# Robot Photos
+
+## Front View
+
 ![Vehicle front](./assets/images/vehicle-front.png)
 
-### Back View
+## Back View
+
 ![Vehicle back](./assets/images/vehicle-back.png)
 
-### Left View
+## Left View
+
 ![Vehicle left](./assets/images/vehicle-left.png)
 
-### Right View
+## Right View
+
 ![Vehicle right](./assets/images/vehicle-right.png)
 
-### Top View
+## Top View
+
 ![Vehicle top](./assets/images/vehicle-top.png)
 
-### Bottom View
+## Bottom View
+
 ![Vehicle bottom](./assets/images/vehicle-bottom.png)
 
-## Sensor Placement
+---
 
-The robot currently uses:
+# Mobility and Mechanical Design
 
-- **OpenMV camera**
-- **left distance sensor**
-- **front distance sensor**
-- **right distance sensor**
+## Chassis and Drive System
 
-The current placement of the camera and sensors is shown below:
+The robot uses a LEGO Technic based chassis with rear-wheel drive and front-wheel steering.
 
-![Sensor placement](./assets/images/sensor-placement.png)
+For steering, we selected the **SPIKE Medium Motor** because it provides significantly higher positioning accuracy compared to the Powered Up motor.
 
-## Open Challenge Flow
+### Engineering Trade-Off
 
-The current Open Challenge logic is:
+| Option             | Advantage               | Disadvantage               |
+| ------------------ | ----------------------- | -------------------------- |
+| SPIKE Medium Motor | High steering precision | Lower torque               |
+| Powered Up Motor   | Higher torque           | Lower positioning accuracy |
 
-1. Detect track or walls
-2. Follow lane or path
-3. Complete 3 laps
-4. Stop in the finish section
+Since steering precision is critical for lane following and parking, we prioritized accuracy over power.
 
-![Open Challenge flowchart](./assets/images/open-challenge-flowchart.png)
+---
 
-## Obstacle Challenge Flow
+## Mechanical Evolution
 
-The current Obstacle Challenge logic is:
+During development, the robot underwent multiple design revisions.
 
-1. Detect red or green pillar
-2. Choose the correct passing side
-3. Avoid obstacle
-4. Recover to lane
-5. Complete 3 laps
-6. Search for parking
-7. Perform parallel parking
+### Version 1
 
-![Obstacle Challenge flowchart](./assets/images/obstacle-challenge-flowchart.png)
+* Original steering mechanism
+* Wider chassis
+* Standard wheels
 
-## Software State Machine
+### Version 2
 
-The current software is organized around the following main states:
+After testing, we discovered that the original steering mechanism produced inconsistent turns.
 
-- `INIT`
-- `CALIBRATE`
-- `WAIT_CAMERA`
-- `DRIVE`
-- `DETECT`
-- `AVOID`
-- `RECOVER`
-- `FINISH`
+Changes:
 
-![State machine](./assets/images/state-machine.png)
+* Returned to a parallel steering system
+* Removed steering gears to eliminate backlash
+* Improved steering zero-position accuracy
+* Shifted center of mass toward the rear
 
-## Current Hardware Summary
+### Version 3
 
-The robot currently includes:
+Further improvements included:
 
-- LEGO Technic chassis
-- rear drive motor
-- front steering motor
-- OpenMV camera
-- three distance sensors
-- onboard electronics and custom mounts
+* Reduced chassis width
+* Improved maneuverability
+* Installed silicone wheels
+* Improved traction on the competition field
+* Finalized OpenMV-Arduino-Technic Hub architecture
 
-## Current Repository Status
+---
 
-This repository currently contains:
+## Mechanical Layout
 
-- robot photos
-- team photo
-- challenge flowcharts
-- software state machine
-- sensor placement image
+### Chassis Design
 
-More technical documentation will be added later, including:
+![Chassis CAD](./assets/images/chassis-cad.png)
 
-- wiring diagram
-- chassis diagram
-- detailed software architecture
-- testing metrics
-- engineering decisions
-- full reproducibility notes
+### Steering System
 
-## Goal of This Repository
+![Steering system](./assets/images/steering-system.png)
 
-The purpose of this repository is to document the development of our WRO Future Engineers 2026 robot and show the current progress of our engineering work.And make our robot Reproducibility
+---
 
+## Testing and Improvements
 
-## Mobility and Mechanical Design
-
-### Chassis and Drive System
-
-We selected the SPIKE Medium Motor for the steering system because it provides significantly higher positioning accuracy compared to the LEGO Powered Up motor. Precise steering is critical for maintaining stable lane following and accurate turning. The trade-off of this decision is lower torque and power, which we accepted in exchange for improved steering precision.
-
-### Design Evolution
-
-During the development process, the robot underwent several major revisions.
-
-After testing the first version, we discovered that the original steering mechanism did not provide consistent and repeatable turning behavior. As a result, we returned to a parallel steering system that offered more predictable movement.
-
-Additional improvements included:
-
-* Removal of gears from the steering mechanism to reduce backlash and improve steering accuracy.
-* Improved center position calibration ("zero position") of the steering system.
-* Relocation of the center of mass toward the rear of the robot.
-* Reduction of the robot width to improve maneuverability and simplify parking maneuvers.
-* Replacement of the original wheels with silicone wheels after testing revealed insufficient traction on the competition field.
-
-### Mechanical Layout
-
-**Mechanical Design Diagram**
-
-*Insert chassis CAD image here.*
-
-**Steering System Diagram**
-
-*Insert steering mechanism diagram here.*
-
-### Testing and Improvements
-
-| Test                   | Observation                                          | Improvement                          |
-| ---------------------- | ---------------------------------------------------- | ------------------------------------ |
-| Steering accuracy test | Original steering system produced inconsistent turns | Switched to parallel steering system |
-| Traction test          | Wheels slipped during acceleration and turning       | Replaced wheels with silicone wheels |
-| Parking test           | Wide chassis reduced maneuverability                 | Reduced robot width                  |
+| Test                    | Observation                          | Improvement              |
+| ----------------------- | ------------------------------------ | ------------------------ |
+| Steering Accuracy Test  | Inconsistent turning behavior        | Parallel steering system |
+| Traction Test           | Wheel slip during turns              | Silicone wheels          |
+| Parking Test            | Wide chassis reduced maneuverability | Narrower chassis         |
+| Sensor Calibration Test | Position drift detected              | Wall-based calibration   |
 
 ---
 
@@ -184,118 +151,172 @@ Additional improvements included:
 
 The robot is powered by two 4V lithium batteries.
 
-Most electronic components in our system operate at 3.3V. Instead of using resistor-based voltage reduction, we chose to use a voltage converter (buck converter) that efficiently regulates the voltage from the batteries to 3.3V.
+Most electronic components operate at 3.3V, therefore we use a buck converter to efficiently regulate the voltage.
 
-The converter is mounted underneath the Arduino on a custom 3D-printed component, helping to reduce space usage and improve the overall ergonomics of the robot.
+Advantages of this solution:
 
-### Power Architecture Diagram
+* Improved efficiency
+* Reduced power loss
+* Compact installation
+* Better battery utilization
 
-*Insert power distribution diagram here.*
-
-### Wiring Diagram
-
-(./assets/Wire.jpeg)
+The converter is mounted below the Arduino on a custom 3D-printed bracket.
 
 ---
 
-## Sensor Placement and Design Trade-Offs
+## Power Architecture Diagram
 
-We positioned our distance sensors on the front, left, and right sides of the robot at 90-degree angles.
+![Power architecture](./assets/images/power-diagram.png)
 
-This decision was made for several reasons:
+---
+
+## Wiring Diagram
+
+![Wiring Diagram](./assets/Wire.jpeg)
+
+---
+
+# Sensor Placement
+
+The robot uses:
+
+* OpenMV Camera
+* Left Distance Sensor
+* Front Distance Sensor
+* Right Distance Sensor
+
+![Sensor placement](./assets/images/sensor-placement.png)
+
+---
+
+## Sensor Placement Trade-Off
+
+The side and front sensors are mounted at 90-degree angles.
 
 ### Advantages
 
 #### Simpler Mathematics
 
-The sensors measure distances directly without requiring projection calculations. This simplifies software development and improves processing efficiency.
+Sensor readings directly correspond to wall distance.
+
+No projection calculations are required.
 
 #### Direction Detection
 
-The side sensors help determine the direction of movement around the track.
-
-For example:
-
-* If the left wall disappears from the left sensor's field of view, the robot can infer the track direction.
-* If the right wall disappears first, the robot can determine the opposite direction.
+The robot can determine driving direction based on which wall disappears first from the sensor field of view.
 
 ### Disadvantages
 
-This configuration creates blind spots at approximately 45 degrees relative to the robot.
+This arrangement creates blind spots around 45 degrees.
 
-We accepted this limitation because the benefits of simpler calculations and reliable direction detection outweighed the disadvantages.
-
-### Sensor Layout Diagram
-
-*Insert sensor placement diagram here.*
+We accepted this compromise because it greatly simplifies navigation calculations.
 
 ---
 
-## Calibration Method
+# Calibration Method
 
-After extensive testing, we determined that the most reliable calibration method is based on distance sensor measurements.
+After extensive testing, we determined that wall-based calibration provides the most reliable performance.
 
-The robot continuously maintains an optimal distance from the inner wall of the track. By using wall distance measurements as a reference, the robot can accurately adjust its position and maintain a consistent driving path.
-
-### Calibration Procedure
-
-1. Read side sensor values.
-2. Compare measured distance to target distance.
-3. Calculate position error.
-4. Apply steering correction.
-5. Repeat continuously during operation.
-
-### Calibration Flowchart
-
-(./assets/images/calibrateflowchart)
+The robot continuously maintains an optimal distance from the inner wall.
 
 ---
 
-# Software Architecture and Obstacle Strategy
+## Calibration Procedure
 
-## System Architecture
+1. Place the robot parallel to a wall.
+2. Read left and right sensor values.
+3. Set target distance.
+4. Calculate position error.
+5. Apply steering correction.
+6. Repeat continuously during operation.
 
-### Open Challenge
+---
 
-The system operates as follows:
+## Calibration Flowchart
 
-1. Distance sensors collect environmental data.
-2. Arduino receives sensor information.
-3. Arduino sends processed data to the Technic Hub using the LumpDeviceBuilder library.
-4. The Technic Hub converts the incoming data into numerical values.
-5. Navigation algorithms determine the required movement.
-6. Motor commands are sent to the drive and steering motors.
+![Calibration Flowchart](./assets/images/calibrateflowchart.png)
 
-### Obstacle Challenge
+---
 
-The obstacle challenge uses the OpenMV camera.
+# Software Architecture
 
-1. The OpenMV camera detects colored objects.
-2. The camera determines the required navigation command.
-3. The command is sent to the Arduino.
-4. Arduino forwards the information to the Technic Hub.
-5. The Technic Hub executes the appropriate maneuver.
+## System Overview
 
-### Why We Chose Arduino as the Communication Bridge
+The robot consists of three main processing units:
 
-After multiple experiments, we found that the OpenMV camera integrates more reliably with Arduino than directly with the Technic Hub through a custom communication protocol.
+* OpenMV Camera
+* Arduino Mega
+* LEGO Technic Hub
 
-Using Arduino as an intermediary provides:
+---
 
-* More stable communication.
-* Easier debugging.
-* Better compatibility with OpenMV.
-* Simpler software architecture.
+## Open Challenge Data Flow
 
-The Arduino then communicates with the Technic Hub using the LumpDeviceBuilder library.
+1. Distance sensors collect measurements.
+2. Arduino processes sensor data.
+3. Arduino sends data to the Technic Hub using LumpDeviceBuilder.
+4. Technic Hub calculates navigation decisions.
+5. Hub sends commands to motors.
 
-### Software Flowchart
+---
 
-*Insert software flowchart here.*
+## Obstacle Challenge Data Flow
 
-### State Machine
+1. OpenMV detects colored pillars.
+2. OpenMV determines obstacle direction.
+3. OpenMV sends command to Arduino.
+4. Arduino forwards command to Technic Hub.
+5. Technic Hub performs avoidance maneuver.
 
-*Insert state machine diagram here.*
+---
+
+## Software Architecture Diagram
+
+![Software Architecture](./assets/images/software-architecture.png)
+
+---
+
+## Open Challenge Flow
+
+![Open Challenge flowchart](./assets/images/open-challenge-flowchart.png)
+
+---
+
+## Obstacle Challenge Flow
+
+![Obstacle Challenge flowchart](./assets/images/obstacle-challenge-flowchart.png)
+
+---
+
+## Software State Machine
+
+The software is organized around the following states:
+
+* INIT
+* CALIBRATE
+* WAIT_CAMERA
+* DRIVE
+* DETECT
+* AVOID
+* RECOVER
+* FINISH
+
+![State machine](./assets/images/state-machine.png)
+
+---
+
+# Why We Use Arduino as a Communication Bridge
+
+After multiple experiments, we found that OpenMV communicates more reliably with Arduino than directly with the Technic Hub.
+
+Benefits:
+
+* Better compatibility
+* Simpler debugging
+* More stable communication
+* Easier software integration
+
+The Arduino then transfers information to the Technic Hub through the LumpDeviceBuilder library.
 
 ---
 
@@ -305,87 +326,111 @@ The Arduino then communicates with the Technic Hub using the LumpDeviceBuilder l
 
 During development we faced several engineering constraints:
 
-* Limited available space inside the robot.
-* Limited processing power on embedded devices.
-* Weight distribution requirements.
-* Sensor field-of-view limitations.
-* Competition time constraints.
+* Limited available space
+* Processing power limitations
+* Weight distribution requirements
+* Sensor field-of-view restrictions
+* Competition time constraints
+
+---
 
 ## Design Trade-Offs
 
 ### Steering Accuracy vs Motor Power
 
-We selected the SPIKE Medium Motor because steering precision was more important than torque.
+Benefit:
 
-**Benefit:** Higher steering accuracy.
+* Higher steering accuracy
 
-**Cost:** Reduced steering power.
+Cost:
+
+* Lower torque
 
 ### Sensor Simplicity vs Blind Spots
 
-We mounted sensors at 90-degree angles.
+Benefit:
 
-**Benefit:** Simpler calculations and direction detection.
+* Easier calculations
 
-**Cost:** 45-degree blind zones.
+Cost:
 
-### Voltage Converter vs Resistor-Based Regulation
+* 45° blind zones
 
-We chose a buck converter.
+### Buck Converter vs Resistors
 
-**Benefit:** Better efficiency and lower power loss.
+Benefit:
 
-**Cost:** Slightly increased hardware complexity.
+* Higher efficiency
+
+Cost:
+
+* Slightly more hardware complexity
 
 ---
 
-# Version History
+# Bill of Materials (BOM)
 
-## Version 1
-
-* Original steering mechanism.
-* Original wheel configuration.
-* Wider chassis.
-
-## Version 2
-
-* Parallel steering system introduced.
-* Steering gears removed.
-* Center of mass adjusted.
-
-## Version 3
-
-* Silicone wheels installed.
-* Improved sensor calibration method.
-* OpenMV-Arduino-Technic Hub communication architecture finalized.
+| Component          | Quantity |
+| ------------------ | -------- |
+| LEGO Technic Hub   | 1        |
+| SPIKE Medium Motor | 1        |
+| Drive Motor        | 1        |
+| Arduino Mega       | 1        |
+| OpenMV H7 Plus     | 1        |
+| Distance Sensors   | 3        |
+| Buck Converter     | 1        |
+| Lithium Batteries  | 2        |
 
 ---
 
 # Reproducibility
 
-This repository contains all information required to reproduce the robot:
+This repository contains all information required to reproduce our robot.
 
-* Source code
-* CAD files
-* Wiring diagrams
-* Mechanical drawings
-* Calibration procedures
-* Build instructions
+Included:
 
-## Build Instructions
+* Source Code
+* CAD Files
+* Wiring Diagrams
+* Software Documentation
+* Calibration Method
+* Build Instructions
 
-### Hardware Assembly
+---
 
-*Insert assembly guide here.*
+# Build Instructions
 
-### Electronics Assembly
+## Step 1
 
-(./assets/Wire.jpeg)
+Assemble the chassis according to the CAD files.
 
+## Step 2
 
-### Calibration Procedure
+Install steering and drive motors.
 
-*Insert calibration instructions here.*
+## Step 3
+
+Mount all sensors.
+
+## Step 4
+
+Install Arduino and OpenMV.
+
+## Step 5
+
+Connect all electronics according to the wiring diagram.
+
+## Step 6
+
+Upload software to OpenMV, Arduino and Technic Hub.
+
+## Step 7
+
+Perform calibration.
+
+## Step 8
+
+Run validation tests.
 
 ---
 
@@ -393,11 +438,47 @@ This repository contains all information required to reproduce the robot:
 
 ```text
 /
+├── assets/
+│   ├── images/
+│   └── Wire.jpeg
+│
 ├── CAD/
-├── Wiring/
+│   ├── chassis
+│   ├── sensor_mount
+│   └── electronics_mount
+│
 ├── Code/
+│   ├── Arduino/
+│   ├── OpenMV/
+│   └── TechnicHub/
+│
 ├── Documentation/
-├── Images/
+│
 └── README.md
 ```
 
+---
+
+# Current Repository Status
+
+The repository currently contains:
+
+* Robot photos
+* Team photo
+* Sensor placement
+* Wiring diagram
+* Flowcharts
+* State machine
+* Engineering documentation
+
+Future updates may include:
+
+* Additional test results
+* Performance metrics
+* New robot revisions
+
+---
+
+# Goal of This Repository
+
+The purpose of this repository is to document the complete development process of our WRO Future Engineers 2026 robot, provide reproducible engineering documentation, and demonstrate the evolution of our design from concept to competition-ready autonomous vehicle.
