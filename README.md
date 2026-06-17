@@ -425,9 +425,9 @@ Cost:
 | LEGO Technic Hub   | 1        |
 | SPIKE Medium Motor | 1        |
 | Drive Motor        | 1        |
-| Arduino Mega       | 1        |
+| Arduino Mega  2560 | 1        |
 | OpenMV H7 Plus     | 1        |
-| Distance Sensors   | 3        |
+| SharpDistanceSensors| 3        |
 | Buck Converter     | 1        |
 | Lithium Batteries  | 2        |
 
