@@ -11,7 +11,9 @@ This repository contains the complete engineering documentation, software, CAD f
 ## Members
 
 * **Mussabek Nurtas**
+Head of mechanical engineering  
 * **Mukhtar Gulsim**
+Head of software engineering 
 
 ## Team Photo
 
@@ -44,31 +46,67 @@ The robot is capable of completing both competition tasks:
 
 # Robot Photos
 
-## Front View
+## Previous Robot Version
+
+### Front View
 
 ![Vehicle front](./assets/images/vehicle-front.png)
 
-## Back View
+### Back View
 
 ![Vehicle back](./assets/images/vehicle-back.png)
 
-## Left View
+### Left View
 
 ![Vehicle left](./assets/images/vehicle-left.png)
 
-## Right View
+### Right View
 
 ![Vehicle right](./assets/images/vehicle-right.png)
 
-## Top View
+### Top View
 
 ![Vehicle top](./assets/images/vehicle-top.png)
 
-## Bottom View
+### Bottom View
 
 ![Vehicle bottom](./assets/images/vehicle-bottom.png)
 
 ---
+
+# Current Competition Robot (Version 3)
+
+
+
+## Front View
+```md
+![Current Robot Front](./assets/images/frontnew.jpeg)
+```
+
+## Back View
+
+```md
+![Current Robot Back](./assets/images/backnew.jpeg)
+```
+
+## Left View
+
+```md
+![Current Robot Left](./assets/images/leftnew.jpeg)
+```
+
+## Right View
+
+```md
+![Current Robot Right](./assets/images/rightnew.jpeg)
+```
+
+## Top View
+
+```md
+![Current Robot Top](./assets/images/topnew.jpeg)
+```
+  
 
 # Mobility and Mechanical Design
 
@@ -124,13 +162,9 @@ Further improvements included:
 
 ## Mechanical Layout
 
-### Chassis Design
-
-![Chassis CAD](./assets/images/chassis-cad.png)
-
 ### Steering System
 
-![Steering system](./assets/images/steering-system.png)
+![Steering system](./assets/images/steering.png)
 
 ---
 
@@ -166,7 +200,29 @@ The converter is mounted below the Arduino on a custom 3D-printed bracket.
 
 ## Power Architecture Diagram
 
-![Power architecture](./assets/images/power-diagram.png)
+## Power Architecture
+
+```text
+2× 4V Li-ion Batteries
+            │
+            ▼
+      Buck Converter
+          (3.3V)
+            │
+            ├── OpenMV H7 Plus
+            ├── Arduino Mega
+            ├── Left IR Sensor
+            ├── Front IR Sensor
+            └── Right IR Sensor
+
+Arduino Mega
+      │
+      ▼
+Technic Hub
+      │
+      ├── Steering Motor
+      └── Drive Motor
+```
 
 ---
 
@@ -267,12 +323,6 @@ The robot consists of three main processing units:
 3. OpenMV sends command to Arduino.
 4. Arduino forwards command to Technic Hub.
 5. Technic Hub performs avoidance maneuver.
-
----
-
-## Software Architecture Diagram
-
-![Software Architecture](./assets/images/software-architecture.png)
 
 ---
 
@@ -470,12 +520,6 @@ The repository currently contains:
 * Flowcharts
 * State machine
 * Engineering documentation
-
-Future updates may include:
-
-* Additional test results
-* Performance metrics
-* New robot revisions
 
 ---
 
